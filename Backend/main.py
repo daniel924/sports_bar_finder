@@ -1,4 +1,5 @@
 import webapp2
+
 from google.appengine.ext import ndb
 
 class Bar(ndb.Model):
@@ -15,11 +16,10 @@ class MainPage(webapp2.RequestHandler):
 class SearchHandler(webapp2.RequestHandler):
 	def get(self):
 		self.response.headers['Content-Type'] = 'text/plain'
-		search_val = self.request.get("value")
+		search_val = self.request.get("value").lower()
 		bars = Bar.query(
 			ndb.OR(Bar.name == search_val, Bar.teams == search_val)
 			).fetch()
-		# import pdb; pdb.set_trace()
 		if not bars:
 			self.response.out.write("Could not find results for: " + search_val)
 			return
@@ -27,15 +27,19 @@ class SearchHandler(webapp2.RequestHandler):
 			info = bar.name + ": " + ' '.join(bar.teams).rstrip(' ')
 			self.response.out.write(info)
 			bar
-			#	self.response.headers['Content-Type'] = 'application/json'
-		# 	self.response.out.write(json.dumps{'sdf':"sfdsd"})
 
 class Populate(webapp2.RequestHandler):
 	def get(self):
-		bar_name = self.request.get("bar")
+		bar_name = self.request.get("bar").lower()
 		bar_teams = self.request.get("teams")
-		bar = Bar(name=bar_name,
-				   teams=bar_teams.split(','))
+		# Do not add the same bar twice.
+		bar = Bar.query(Bar.name == bar_name).fetch()
+		teams = [s.lower() for s in bar_teams.split(',')]
+		if not bar:
+			bar = Bar(name=bar_name, teams=teams)
+		else:
+			bar = bar[0]
+			bar.teams = list(set(teams) | set(bar.teams))
 		bar.put()
 
 class Reset(webapp2.RequestHandler):
