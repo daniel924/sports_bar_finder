@@ -25,7 +25,7 @@ class SearchHandler(webapp2.RequestHandler):
 			return
 		for bar in bars:
 			info = bar.name.title() + ":" 
-			info += ' '.join(bar.teams).rstrip(' ').title()
+			info += ','.join(bar.teams).rstrip(',').title()
 			self.response.out.write(info)
 
 class Populate(webapp2.RequestHandler):
@@ -39,7 +39,8 @@ class Populate(webapp2.RequestHandler):
 			bar = Bar(name=bar_name, teams=teams)
 		else:
 			bar = bar[0]
-			bar.teams = list(set(teams) | set(bar.teams))
+			bar.teams = [
+				t.lstrip().rstrip() for t in set(teams) | set(bar.teams)]
 		bar.put()
 
 class Reset(webapp2.RequestHandler):
