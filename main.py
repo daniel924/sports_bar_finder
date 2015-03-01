@@ -1,3 +1,4 @@
+import collections
 import json
 import webapp2
 
@@ -38,13 +39,14 @@ class SearchHandler(webapp2.RequestHandler):
 					Bar.name == search_val, 
 					Bar.teams == search_val)
 				).fetch()
+			
 		if not bars:
 			self.response.out.write('')
 			return
 
-		bars_json = []
+		bars_json = collections.defaultdict(list)
 		for bar in bars:
-			bars_json.append({
+			bars_json['bars'].append({
 				'name': bar.name.title(),
 				'teams': [t.title() for t in bar.teams],
 				'city': bar.city.title(),
