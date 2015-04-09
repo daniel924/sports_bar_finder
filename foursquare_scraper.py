@@ -26,7 +26,7 @@ def BuildTeamsList():
 
 TEAMS_MAP = BuildTeamsList()
 
-def InsertBar(b, existing_bar_map, client):
+def InsertBar(b, existing_bar_map, client, lock):
 	try:
 		name = lib.sanitize(str(b['name']))	
 	except TypeError as e:
@@ -52,7 +52,8 @@ def InsertBar(b, existing_bar_map, client):
 	for tag in client.venues(b['id'])['venue']['tags']:
 		if tag in TEAMS_MAP: 
 			teams.add(TEAMS_MAP[tag])
-	bar_model.insert(name, teams, address, city)
+	with lock:		
+		bar_model.insert(name, teams, address, city)
 
 def FindLocalBars(city=None, ll=None, existing_bar_map=None):
 	# Get local bars from foursquare
@@ -64,8 +65,12 @@ def FindLocalBars(city=None, ll=None, existing_bar_map=None):
 	bars = client.venues.search(params=query_params)
 	print [b['name'] for b in bars['venues']]
 
+	lock = threading.Lock()
 	for b in bars['venues']:
-		InsertBar(b, existing_bar_map, client)
+		t = threading.Thread(
+			target=InsertBar, args=(b, existing_bar_map, client, lock))
+		t.start()
+		# InsertBar(b, existing_bar_map, client)
 
 
 def FindLocalBarsWithTips(city=None, ll=None):
