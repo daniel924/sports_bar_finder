@@ -1,0 +1,151 @@
+Anaheim, Ducks
+Arizona, Cardinals
+Arizona, Coyotes
+Arizona, Diamondbacks		
+Atlanta, Braves	
+Atlanta, Falcons		
+Atlanta, Hawks
+Baltimore, Orioles
+Baltimore, Ravens	
+BC, Lions
+Boston, Bruins
+Boston, Celtics	
+Boston, Red Sox	
+Brooklyn, Nets
+Buffalo, Bills		
+Buffalo, Sabres
+Calgary, Flames
+Calgary, Stampeders
+Carolina, Hurricanes
+Carolina, Panthers		
+Charlotte, Hornets	
+Chicago, Bears
+Chicago, Blackhawks
+Chicago, Bulls		
+Chicago, Cubs	
+Chicago, Fire		
+Chicago, White Sox		
+Cincinnati, Bengals		
+Cincinnati, Reds		
+Cleveland, Browns	
+Cleveland, Cavaliers
+Cleveland, Indians
+Colorado, Avalanche
+Colorado, Rapids	
+Colorado, Rockies	
+Columbus, Blue Jackets
+Columbus, Crew SC		
+Dallas, FC
+Dallas, Cowboys
+Dallas, Mavericks
+Dallas, Stars
+D.C., United
+Denver, Broncos
+Denver, Nuggets
+Detroit, Lions
+Detroit, Pistons
+Detroit, Red Wings
+Detroit, Tigers
+Edmonton, Eskimos
+Edmonton, Oilers
+Florida, Panthers
+Golden State, Warriors
+Green Bay, Packers
+Hamilton, Tiger-Cats
+Houston, Astros
+Houston, Dynamo
+Houston, Rockets
+Houston, Texans
+Indiana, Pacers
+Indianapolis, Colts
+Jacksonville, Jaguars
+Sporting, Kansas City
+Kansas City, Chiefs
+Kansas City, Royals
+LA, Galaxy
+Los Angeles, Angels
+Los Angeles, Clippers
+Los Angeles, Dodgers
+Los Angeles, Kings
+Los Angeles, Lakers
+Memphis, Grizzlies
+Miami, Dolphins
+Miami, Heat
+Miami, Marlins
+Milwaukee, Brewers
+Milwaukee, Bucks
+Minnesota, Timberwolves
+Minnesota, Twins
+Minnesota, Vikings
+Minnesota, Wild
+Montreal, Alouettes
+Montreal, Canadiens
+Montreal, Impact
+Nashville, Predators
+New England, Patriots
+New England, Revolution
+New Jersey, Devils
+New Orleans, Pelicans
+New Orleans, Saints
+New York City, FC
+New York, Giants
+New York, Islanders
+New York, Jets
+New York, Knicks
+New York, Mets
+New York, Rangers
+New York, Red Bulls
+New York, Yankees
+Oakland, Athletics
+Oakland, Raiders
+Oklahoma City, Thunder
+Orlando City, SC
+Orlando, Magic
+Ottawa, Redblacks
+Ottawa, Senators
+Philadelphia, 76ers
+Philadelphia, Eagles
+Philadelphia, Flyers
+Philadelphia, Phillies
+Philadelphia, Union
+Phoenix, Suns
+Pittsburgh, Penguins
+Pittsburgh, Pirates
+Pittsburgh, Steelers
+Portland, Trail Blazers
+Portland, Timbers
+Sacramento, Kings
+Salt Lake, Real
+San Antonio, Spurs
+San Diego, Chargers
+San Diego, Padres
+San Francisco, 49ers
+San Francisco, Giants
+San Jose, Earthquakes
+San Jose, Sharks
+Saskatchewan, Roughriders
+St. Louis, Blues
+St. Louis, Cardinals
+St. Louis, Rams
+Seattle, Mariners
+Seattle, Seahawks
+Seattle, Sounders FC
+Tampa Bay, Buccaneers
+Tampa Bay, Lightning
+Tampa Bay, Rays
+Tennessee, Titans
+Texas, Rangers
+Toronto, Argonauts
+Toronto, Blue Jays
+Toronto, FC
+Toronto, Maple Leafs
+Toronto, Raptors
+Utah, Jazz
+Vancouver, Canucks
+Vancouver, Whitecaps FC
+Washington, Capitals
+Washington, Nationals
+Washington, Redskins
+Washington, Wizards
+Winnipeg, Blue Bombers
+Winnipeg, Jets
