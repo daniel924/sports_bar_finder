@@ -3,9 +3,9 @@ import json
 import time
 import webapp2
 
+import bar_model
 import foursquare_scraper
 import lib
-import bar_model
 
 from google.appengine.ext import ndb
 
@@ -58,13 +58,10 @@ class Reset(webapp2.RequestHandler):
 class Pow(webapp2.RequestHandler):
 	def get(self):
 		start = time.time()
-		bars = Bar.query(Bar.city == 'new york').fetch()
+		bars = bar_model.searchByLocation('new york')
 		existing_bar_map = {bar.name: bar for bar in bars}
-		local_bars = foursquare_scraper.FindLocalBars(
+		foursquare_scraper.FindLocalBars(
 			city='new york', existing_bar_map=existing_bar_map)
-		for name, teams, address, city in local_bars:
-			insert(name, teams, address, city)
-
 		print "\n\n\nTime: " + str((time.time() - start)) + "\n\n\n"
 
 

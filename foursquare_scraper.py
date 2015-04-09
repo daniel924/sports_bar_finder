@@ -1,5 +1,8 @@
 import collections
 import foursquare
+import threading
+
+import bar_model
 import lib
 
 
@@ -23,7 +26,7 @@ def BuildTeamsList():
 
 TEAMS_MAP = BuildTeamsList()
 
-def BuildBar(b):
+def InsertBar(b, existing_bar_map, client):
 	try:
 		name = lib.sanitize(str(b['name']))	
 	except TypeError as e:
@@ -37,7 +40,7 @@ def BuildBar(b):
 		name in existing_bar_map and 
 		existing_bar_map[name].city == city and 
 		existing_bar_map[name].address == address):
-			return
+			return None
 	# Thoughts to improve speed:
 	# 0. problem is multiple get calls and this doesnt work async
 	# 1. Bulk query venues - THREADING
@@ -49,7 +52,7 @@ def BuildBar(b):
 	for tag in client.venues(b['id'])['venue']['tags']:
 		if tag in TEAMS_MAP: 
 			teams.add(TEAMS_MAP[tag])
-	return (name, teams, address, city)
+	bar_model.insert(name, teams, address, city)
 
 def FindLocalBars(city=None, ll=None, existing_bar_map=None):
 	# Get local bars from foursquare
@@ -59,11 +62,10 @@ def FindLocalBars(city=None, ll=None, existing_bar_map=None):
 	if city: query_params['near'] = city
 	if ll: query_params['ll'] = ll
 	bars = client.venues.search(params=query_params)
-	import pdb; pdb.set_trace()
 	print [b['name'] for b in bars['venues']]
 
 	for b in bars['venues']:
-		yield BuildBar(b)
+		InsertBar(b, existing_bar_map, client)
 
 
 def FindLocalBarsWithTips(city=None, ll=None):

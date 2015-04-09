@@ -28,7 +28,7 @@ def insert(name, team_list, address, city):
 		bar.teams = list(set(teams) | set(bar.teams))
 	bar.put()
 
-def search(val, city):
+def search(val, city=None):
 	if city:
 			bars = Bar.query(
 				ndb.AND(
@@ -40,3 +40,7 @@ def search(val, city):
 			ndb.OR(Bar.name == val, Bar.teams == val)
 		).fetch()
 	return bars
+
+def searchByLocation(city=None, ll=None):
+	if city:
+		return Bar.query(Bar.city == city).fetch()
