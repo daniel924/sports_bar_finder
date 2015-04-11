@@ -40,10 +40,9 @@ def InsertBar(b, existing_bar_map, client, lock):
 		name in existing_bar_map and 
 		existing_bar_map[name].city == city and 
 		existing_bar_map[name].address == address):
-			return None
+			return
 	# Thoughts to improve speed:
 	# 0. problem is multiple get calls and this doesnt work async
-	# 1. Bulk query venues - THREADING
 	# 3. make TEAMS_MAP keys into a set and intersect for diff
 	# 4. query tips in the first place, this might help to get 
 	#    query specific team data as opposed to random area
