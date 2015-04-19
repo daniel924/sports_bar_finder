@@ -10,6 +10,21 @@ import lib
 from google.appengine.ext import ndb
 
 
+# Things to do.
+# 1. Tests
+# 2. Add pow to the background maybe?
+# 3. Authorization
+# 4. Add pow to app
+# 		a. thnk about storing longitude, latitude for bars?
+# 		b. restrict user insertion?
+# 5. Stop app from crashing on load
+# 6. Load data in background
+# 7. Maybe do a sweet loading bar
+# 8. Investigate tips for foursquare or other API
+# 9. Figure out best way to structure files
+# 10. Think about bars with different addresses, etc.
+
+
 class Address(ndb.Model):
 	address = ndb.StringProperty()
 	city = ndb.StringProperty()

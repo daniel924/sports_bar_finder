@@ -32,7 +32,7 @@ def InsertBar(b, existing_bar_map, client, lock):
 	except TypeError as e:
 		print e
 		return
-	print name
+	print name 
 	address = lib.sanitize(b['location'].get('address'))
 	city = lib.sanitize(b['location'].get('city'))
 	# Skip if they are already in the DB.
@@ -40,10 +40,8 @@ def InsertBar(b, existing_bar_map, client, lock):
 		name in existing_bar_map and 
 		existing_bar_map[name].city == city and 
 		existing_bar_map[name].address == address):
-			return
+			return 
 	# Thoughts to improve speed:
-	# 0. problem is multiple get calls and this doesnt work async
-	# 3. make TEAMS_MAP keys into a set and intersect for diff
 	# 4. query tips in the first place, this might help to get 
 	#    query specific team data as opposed to random area
 	# 5. migrate to simplejson library

@@ -1,2 +1,5 @@
 def sanitize(s):
-	return s.lower().lstrip().rstrip()
+  if s is None: 
+    return ''
+  else:
+    return s.lower().lstrip().rstrip()

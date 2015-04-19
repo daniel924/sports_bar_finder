@@ -2,7 +2,6 @@ import lib
 
 from google.appengine.ext import ndb
 
-
 class Bar(ndb.Model):
 	id = ndb.StringProperty()
 	name = ndb.StringProperty()
@@ -19,7 +18,6 @@ def insert(name, team_list, address, city):
 	teams = [lib.sanitize(t) for t in team_list]
 
 	# Create new bar or append new teams to old bar.
-	# this should be synchronous.
 	bar = Bar.query(ndb.AND(Bar.name == name, Bar.city == city)).fetch()
 	if not bar:
 		bar = Bar(name=name, teams=teams, address=address, city=city)
@@ -32,7 +30,7 @@ def search(val, city=None):
 	if city:
 			bars = Bar.query(
 				ndb.AND(
-					ndb.OR(Bar.name == vsl, Bar.teams == val),
+					ndb.OR(Bar.name == val, Bar.teams == val),
 					Bar.city == city)
 			).fetch()
 	else:
@@ -44,3 +42,5 @@ def search(val, city=None):
 def searchByLocation(city=None, ll=None):
 	if city:
 		return Bar.query(Bar.city == city).fetch()
+
+
