@@ -65,6 +65,14 @@ class BarModelTests(unittest.TestCase):
     self.assertEqual('peeps', bars[0].name)
     self.assertEqual(['plows', 'pampers'], bars[0].teams)
 
+  def testSearchWithLL(self):
+    bar_model.Bar(name='peeps', teams=['beepin', 'bops'], address='addy', city='new york, ny', ll='-1,22').put()
+    bar_model.Bar(name='peeps', teams=['plows', 'pouches'], address='addy', city='boston, ma', ll='100,100').put()
+    bars = bar_model.search('peeps', ll='100,100')
+    self.assertEqual(1, len(bars))
+    self.assertEqual('peeps', bars[0].name)
+    self.assertEqual(['plows', 'pouches'], bars[0].teams)
+
 def tearDown(self):
   self.testbed.deactivate()
 
