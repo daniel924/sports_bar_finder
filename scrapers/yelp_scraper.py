@@ -87,7 +87,7 @@ def FindBarByLocation(val, ll=None, city=None):
     address = b['location']['address'][0]
     city = b['location']['city']
     bars.append(bar_model.Bar(
-        name=b['name'], address=address, city=city, 
+        name=lib.sanitize(b['name']), address=address, city=city, 
         lat=b['location']['coordinate']['latitude'],
         lon=b['location']['coordinate']['longitude'])) 
   bar_names = [bar.name for bar in bars]

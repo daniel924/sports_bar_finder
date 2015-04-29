@@ -39,6 +39,12 @@ from google.appengine.ext import ndb
 #     batch query using your list of sports teams..
 # 16. bars with apostrophy s are tricky, possibly check for them
 # 17. in app, lat + lon is ignored at -1, -1
+# 18. fix capitalization issues after ' and numbers
+#  		a. have search name and display name separate - better
+# 		b. store two copies - easier
+# 19. be careful with & vs ampersand
+# 20. bars don't always have same name e.g. stone creek vs. stone creek bar and lounge
+# 21. sometimes queries from yelp return multiple bars
 
 class Address(ndb.Model):
 	address = ndb.StringProperty()
@@ -98,7 +104,7 @@ class SearchHandler(webapp2.RequestHandler):
 				# Next, validate these are bars and populate teams by 
 				# getting the tags from foursquare.
 				teams = foursquare_scraper.GetTeamsForBar(bar.name, ll=ll)
-				if not teams:  
+				if not teams:
 					logging.info('Bar %s found but had no teams', bar.name)
 					continue
 				logging.info('Teams found for bar %s', bar.name)

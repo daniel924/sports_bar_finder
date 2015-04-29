@@ -33,6 +33,7 @@ def sanitize(s):
   if s is None: 
     return ''
   else:
+    s = s.replace('&', 'and')
     return s.lower().lstrip().rstrip()
 
 @memoized
@@ -50,8 +51,9 @@ def BuildTeamsList(teams_file):
 
 def BarToJson(bar):
   """Takes in a bar_model.Bar and returns json."""
+  name = bar.display_name if bar.display_name else bar.name
   return {
-      'name': bar.name.title(),
+      'name': name.title(),
       'teams': [t.title() for t in bar.teams],
       'city': bar.city.title(),
       'address': bar.address.title()}

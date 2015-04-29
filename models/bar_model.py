@@ -10,6 +10,7 @@ class Bar(ndb.Model):
 	city = ndb.StringProperty()
 	lat = ndb.FloatProperty()
 	lon = ndb.FloatProperty()
+	display_name = ndb.StringProperty()
 
 
 def insert(name, team_list, address, city, lat, lon):
@@ -20,10 +21,11 @@ def insert(name, team_list, address, city, lat, lon):
 	teams = [lib.sanitize(t) for t in team_list]
 
 	# Create new bar or append new teams to old bar.
-	bar = Bar.query(ndb.AND(Bar.name == name, Bar.city == city)).fetch()
+	bar = search(name, city=city)
 	if not bar:
-		bar = Bar(name=name, teams=teams, address=address, city=city,
-							lat=lat, lon=lon)
+		bar = Bar(name=name.replace('\'', ''), teams=teams, 
+							address=address, city=city, lat=lat, lon=lon, 
+							display_name=name)
 	else:
 		bar = bar[0]
 		bar.teams = list(set(teams) | set(bar.teams))
@@ -38,6 +40,8 @@ def search(val, city=None, ll=None):
 	# 				ndb.OR(Bar.name == val, Bar.teams == val),
 	# 				Bar.ll == ll)
 	# 		).fetch()
+	# Strip ' from name for searching.
+	val = val.replace('\'', '')
 	if city:
 		bars = Bar.query(
 			ndb.AND(

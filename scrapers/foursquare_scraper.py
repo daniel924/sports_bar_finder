@@ -69,7 +69,7 @@ def GetTeamsForBar(bar_name, ll=None, city=None, existing_bar_map=None, client=N
 	bars = client.venues.search(params=query_params)
 	logging.info('Found bars in fsquare: %s\n', [b['name'] for b in bars['venues']])
 	for b in bars['venues']:
-		if b['name'].lower() != bar_name.lower(): continue
+		if lib.sanitize(b['name']) != bar_name: continue
 		teams = _GetTeamsForBar(b, client)
 		return teams
 	return []
