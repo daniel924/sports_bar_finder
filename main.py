@@ -59,18 +59,15 @@ def PushLocalBars(ll):
 	t.start()
 
 class SearchHandler(webapp2.RequestHandler):
-
-
-
 	def get(self):
-		self.response.headers['Content-Type'] = 'text/plain'
+		self.response.headers['Content-Type'] = 'application/json'
 		search_val = lib.sanitize(self.request.get('value'))
 		city = lib.sanitize(self.request.get('city'))
 		ll = lib.sanitize(self.request.get('ll'))
 
 		bars_json = collections.defaultdict(list) # Will load bars here.
 		bars = bar_model.search(search_val, city)
-		# Bar is in our database.
+		# Bar is in our databaseself.
 		if bars:
 			for bar in bars: bars_json['bars'].append(lib.BarToJson(bar))
 			self.response.out.write(json.dumps(bars_json))
