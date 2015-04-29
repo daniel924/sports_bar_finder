@@ -4,3 +4,4 @@ from google.appengine.ext import vendor
 vendor.add('lib')
 vendor.add('models')
 vendor.add('scrapers')
+vendor.add('tests')

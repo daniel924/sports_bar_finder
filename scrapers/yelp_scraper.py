@@ -20,7 +20,7 @@ CONSUMER_SECRET = '2o8g4-ShjYEWhdVitrp4JCrQ1Co'
 TOKEN = 'p9ET-WF6nYbscZ5Ir5nlgdobdc8lbHUT'
 TOKEN_SECRET = 'rGPZIRLb3YUPFdZjlUdMU3QIyUY'
 
-TEAMS_MAP = lib.BuildTeamsList()
+TEAMS_MAP = lib.BuildTeamsList(lib.TEAMS_FILE)
 
 def request(host, path, url_params=None):
     """Prepares OAuth authentication and sends the request to the API.
@@ -79,6 +79,7 @@ def search(term, ll):
     return request(API_HOST, SEARCH_PATH, url_params=url_params)
 
 def FindBarByLocation(val, ll=None, city=None):
+  logging.info('Querying yelp')
   bizes = search(val, ll)['businesses']
   bars = []
   for b in bizes:
@@ -88,7 +89,8 @@ def FindBarByLocation(val, ll=None, city=None):
         name=b['name'], address=address, city=city, 
         lat=b['location']['coordinate']['latitude'],
         lon=b['location']['coordinate']['longitude'])) 
-  print [bar.name for bar in bars]
+  bar_names = [bar.name for bar in bars]
+  logging.info('Bars found from yelp: %s', bar_names)
   return bars
 
 

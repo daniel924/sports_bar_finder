@@ -14,7 +14,7 @@ client_secret = "UYYGDFZQCRCELF1WCCQ5AHZZ4VBYOIXY3LJGL0T3ZHJXH5B3"
 sports_bar_cat_id = "4bf58dd8d48988d11d941735"
 
 LOCK = threading.Lock()
-TEAMS_MAP = lib.BuildTeamsList()
+TEAMS_MAP = lib.BuildTeamsList(lib.TEAMS_FILE)
 
 def _GetTeamsForBar(bar, client):
 	teams = set()
@@ -67,7 +67,7 @@ def GetTeamsForBar(bar_name, ll=None, city=None, existing_bar_map=None, client=N
 	if ll: query_params['ll'] = ll
 	logging.info('Querying foursquare for bar %s', bar_name)
 	bars = client.venues.search(params=query_params)
-	logging.info('Found bars: %s\n', [b['name'] for b in bars['venues']])
+	logging.info('Found bars in fsquare: %s\n', [b['name'] for b in bars['venues']])
 	for b in bars['venues']:
 		if b['name'].lower() != bar_name.lower(): continue
 		teams = _GetTeamsForBar(b, client)

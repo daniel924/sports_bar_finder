@@ -1,6 +1,8 @@
 import collections
 import functools
 
+TEAMS_FILE = 'teams.txt'
+
 class memoized(object):
    '''Decorator. Caches a function's return value each time it is called.
    If called later with the same arguments, the cached value is returned
@@ -34,9 +36,9 @@ def sanitize(s):
     return s.lower().lstrip().rstrip()
 
 @memoized
-def BuildTeamsList():
+def BuildTeamsList(teams_file):
   teams = {}
-  f = open('teams.txt')
+  f = open(teams_file)
   for line in f:
     split = line.split(',')
     city = split[0].lstrip().rstrip().lower()

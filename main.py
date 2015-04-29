@@ -65,20 +65,26 @@ class SearchHandler(webapp2.RequestHandler):
 		city = lib.sanitize(self.request.get('city'))
 		ll = lib.sanitize(self.request.get('ll'))
 
+		logging.info('Searching for %s where city=%s, ll=%s',
+									search_val, city, ll)
 		bars_json = collections.defaultdict(list) # Will load bars here.
 		bars = bar_model.search(search_val, city)
-		# Bar is in our databaseself.
+		# Bar is in our database.
 		if bars:
+			logging.info('Found bars in local db')
 			for bar in bars: bars_json['bars'].append(lib.BarToJson(bar))
 			self.response.out.write(json.dumps(bars_json))
 		# Bar is not in our db; try to find it.
 		else:	
+			logging.info('Bar not in local db.')
 			if not ll and not city: 
+				logging.info('No location given, terminating')
 				self.response.out.write('')
 				return
 			# First, get bars from yelp. These don't have teams.
 			bars = yelp_scraper.FindBarByLocation(search_val, ll)
 			if not bars:
+				logging.info('No bars found in yelp; terminating')
 				self.response.out.write('')
 				return
 			# TODO(ladenheim): write this bar out first and continue on
