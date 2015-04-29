@@ -1,5 +1,6 @@
 import collections
 import json
+import logging
 import os
 import threading
 import time
@@ -37,6 +38,7 @@ from google.appengine.ext import ndb
 #     that the team is indeed in the tags. maybe even do this in a batch
 #     batch query using your list of sports teams..
 # 16. bars with apostrophy s are tricky, possibly check for them
+# 17. in app, lat + lon is ignored at -1, -1
 
 class Address(ndb.Model):
 	address = ndb.StringProperty()
@@ -78,7 +80,7 @@ class SearchHandler(webapp2.RequestHandler):
 		else:	
 			logging.info('Bar not in local db.')
 			if not ll and not city: 
-				logging.info('No location given, terminating')
+				logging.info('No location given; terminating')
 				self.response.out.write('')
 				return
 			# First, get bars from yelp. These don't have teams.
@@ -96,13 +98,17 @@ class SearchHandler(webapp2.RequestHandler):
 				# Next, validate these are bars and populate teams by 
 				# getting the tags from foursquare.
 				teams = foursquare_scraper.GetTeamsForBar(bar.name, ll=ll)
-				if not teams: continue
+				if not teams:  
+					logging.info('Bar %s found but had no teams', bar.name)
+					continue
+				logging.info('Teams found for bar %s', bar.name)
 				bar.teams = teams
 				new_bars_found.append(bar)
 				bars_json['bars'].append(lib.BarToJson(bar))
 			self.response.out.write(json.dumps(bars_json))
 			# Response has been given, now insert bar.
 			for bar in new_bars_found:
+				logging.info('Inserting bar %s to local DB', bar.name)
 				bar_model.insert(
 						bar.name, bar.teams, bar.address, bar.city, bar.lat, 
 						bar.lon)

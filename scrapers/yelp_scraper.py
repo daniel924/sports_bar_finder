@@ -1,4 +1,5 @@
 import collections
+import logging
 import json
 import urllib
 import urllib2
@@ -11,7 +12,7 @@ import lib
 API_HOST = 'api.yelp.com'
 DEFAULT_TERM = 'dinner'
 DEFAULT_LOCATION = 'San Francisco, CA'
-SEARCH_LIMIT = 5
+SEARCH_LIMIT = 3
 SEARCH_PATH = '/v2/search/'
 BUSINESS_PATH = '/v2/business/'
 
