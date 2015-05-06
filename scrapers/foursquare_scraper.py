@@ -66,6 +66,7 @@ def GetTeamsForBar(bar_name, ll=None, city=None, existing_bar_map=None, client=N
 	if city: query_params['near'] = city
 	if ll: query_params['ll'] = ll
 	logging.info('Querying foursquare for bar %s', bar_name)
+	# import pdb; pdb.set_trace()
 	bars = client.venues.search(params=query_params)
 	logging.info('Found bars in fsquare: %s\n', [b['name'] for b in bars['venues']])
 	for b in bars['venues']:

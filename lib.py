@@ -49,6 +49,18 @@ def BuildTeamsList(teams_file):
     teams[team] = full_team_name
   return teams
 
+@memoized
+def BuildBackwardsTeamsList(teams_file):
+  teams = {}
+  f = open(teams_file)
+  for line in f:
+    split = line.split(',')
+    city = sanitize(split[0])
+    team = sanitize(split[1])
+    full_team_name = city + ' ' + team
+    teams[full_team_name] = team
+  return teams
+
 def BarToJson(bar):
   """Takes in a bar_model.Bar and returns json."""
   name = bar.display_name if bar.display_name else bar.name

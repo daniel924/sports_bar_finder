@@ -45,6 +45,7 @@ from google.appengine.ext import ndb
 # 19. be careful with & vs ampersand
 # 20. bars don't always have same name e.g. stone creek vs. stone creek bar and lounge
 # 21. sometimes queries from yelp return multiple bars
+# 22. lookup bar name with just team name
 
 class Address(ndb.Model):
 	address = ndb.StringProperty()

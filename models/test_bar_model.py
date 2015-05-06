@@ -37,7 +37,8 @@ class BarModelTests(unittest.TestCase):
 
   def testInsertBarTrimsWhiteSpaceAndLowersCase(self):
     bar_model.insert(' jOe\'s', [' poPs '], ' aDdy', 'cIty ', 0, 0)
-    bars = bar_model.Bar.query(bar_model.Bar.name == 'joe\'s').fetch()
+    # Apostrophes stripped for searching
+    bars = bar_model.Bar.query(bar_model.Bar.name == 'joes').fetch()
     self.assertEqual(1, len(bars))
     self.assertItemsEqual(['pops'], bars[0].teams)
     self.assertEqual('addy', bars[0].address)
@@ -64,6 +65,12 @@ class BarModelTests(unittest.TestCase):
     self.assertEqual(1, len(bars))
     self.assertEqual('peeps', bars[0].name)
     self.assertEqual(['plows', 'pampers'], bars[0].teams)
+
+  def testSearchWithTeamName(self):
+    bar_model.Bar(name='beer', teams=['new york yankees'], team_names=['yankees']).put()
+    bars = bar_model.search('yankees')
+    self.assertEqual(1, len(bars))
+    self.assertEqual('beer', bars[0].name)
 
   def testSearchWithLL(self):
     bar_model.Bar(name='peeps', teams=['beepin', 'bops'], address='addy', city='new york, ny', lat=-1, lon=22).put()
