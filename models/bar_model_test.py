@@ -82,8 +82,8 @@ class BarModelTests(unittest.TestCase):
     # self.assertEqual('peeps', bars[0].name)
     # self.assertEqual(['plows', 'pouches'], bars[0].teams)
 
-def tearDown(self):
-  self.testbed.deactivate()
+  def tearDown(self):
+    self.testbed.deactivate()
 
 if __name__ == '__main__':
     unittest.main()

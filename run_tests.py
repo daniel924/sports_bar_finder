@@ -19,6 +19,9 @@ def main(sdk_path, test_path):
     else:
       sys.path.insert(0, sdk_path)
 
+    sys.path.insert(0, 'test')
+    sys.path.insert(0, 'model')
+
     # Ensure that the google.appengine.* packages are available
     # in tests as well as all bundled third-party packages.
     import dev_appserver
@@ -33,17 +36,11 @@ def main(sdk_path, test_path):
       print "Note: unable to import appengine_config."
 
     # Discover and run tests.
-    suite = unittest.loader.TestLoader().discover(test_path)
+    suite = unittest.loader.TestLoader().discover(test_path, pattern = "*_test.py")
     unittest.TextTestRunner(verbosity=2).run(suite)
 
 
 if __name__ == '__main__':
-    parser = optparse.OptionParser(USAGE)
-    options, args = parser.parse_args()
-    if len(args) != 2:
-        print 'Error: Exactly 2 arguments required.'
-        parser.print_help()
-        sys.exit(1)
-    SDK_PATH = args[0]
-    TEST_PATH = args[1]
+    SDK_PATH = '/usr/local/google_appengine'
+    TEST_PATH = '.'
     main(SDK_PATH, TEST_PATH)

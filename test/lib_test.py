@@ -16,7 +16,7 @@ class LibTests(unittest.TestCase):
     self.testbed.init_datastore_v3_stub()
     self.testbed.init_memcache_stub()
 
-def testBuildTeamsList(self):
+  def testBuildTeamsList(self):
     tmap = lib.testBuildTeamsList(lib.TEAMS_FILE)
     self.assertEqual('new york yankees', tmap['yankees'])
     self.assertEqual('new york yankees', tmap['yankees'])
@@ -24,17 +24,17 @@ def testBuildTeamsList(self):
     self.assertEqual('phoenix coyotes', tmap['coyotes'])
     self.assertNone(tmap['boston'])
 
-def testSanitize(self):
+  def testSanitize(self):
     s1 = lib.sanitize(None)
     self.assertEqual('', s1)
     s2 = lib.sanitize('   sAsBerYla       ')
     self.assertEqual('sasberyla')
 
-def testBarToJson(self):
+  def testBarToJson(self):
     pass
-  
-def tearDown(self):
-  self.testbed.deactivate()
+
+  def tearDown(self):
+    self.testbed.deactivate()
 
 if __name__ == '__main__':
-    unittest.main()
+  unittest.main()
