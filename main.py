@@ -81,7 +81,8 @@ class SearchHandler(webapp2.RequestHandler):
 		# Bar is in our database.
 		if bars:
 			logging.info('Found bars in local db')
-			for bar in bars: bars_json['bars'].append(lib.BarToJson(bar))
+			for bar in bars: 
+				bars_json['bars'].append(lib.BarToJson(bar))
 			self.response.out.write(json.dumps(bars_json))
 		# Bar is not in our db; try to find it.
 		else:	
