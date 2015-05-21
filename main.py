@@ -89,6 +89,7 @@ class SearchHandler(webapp2.RequestHandler):
 			for bar in bars: 
 				bars_json['bars'].append(lib.BarToJson(bar))
 			self.response.out.write(json.dumps(bars_json))
+		
 		# Bar is not in our db; try to find it.
 		else:	
 			logging.info('Bar not in local db.')
@@ -96,37 +97,44 @@ class SearchHandler(webapp2.RequestHandler):
 				logging.info('No location given; terminating')
 				self.response.out.write('')
 				return
+			
+			import pdb; pdb.set_trace()
+
+
 			# First, get bars from yelp. These don't have teams.
 			bars = yelp_scraper.FindBarByLocation(search_val, ll)
 			if not bars:
 				logging.info('No bars found in yelp; terminating')
 				self.response.out.write('')
 				return
-			# TODO(ladenheim): write this bar out first and continue on
-			# with DB operations? just list te seearch val as team?
-		
+	
 			new_bars_found = []
 			for bar in bars:
 				# Next, validate these are bars and populate teams by 
 				# getting the tags from foursquare.
-				teams = foursquare_scraper.GetTeamsForBar(FOURSQUARE_CLIENT, bar.name, ll=ll)
-				if not teams:
-					logging.info('Bar %s found but had no teams', bar.name)
+				teams, is_bar = foursquare_scraper.GetTeamsForBar(FOURSQUARE_CLIENT, bar.name, ll=ll)
+				if not is_bar: 
+					logging.info('Bar %s not found in foursquare.', bar.name)
 					continue
+				if not teams:
+					logging.info('Bar %s found but had no teams from foursquare', bar.name)
+					# Foursquare often does not have tag data, so if the value submitted was
+					# a team, then just return the yelp bar anyway.
+					teams_map = lib.BuildTeamsList(lib.TEAMS_FILE)
+					if search_val in teams_map: teams = [teams_map[search_val]]
 				logging.info('Teams found for bar %s', bar.name)
 				bar.teams = teams
 				new_bars_found.append(bar)
 				bars_json['bars'].append(lib.BarToJson(bar))
 			self.response.out.write(json.dumps(bars_json))
+			
 			# TODO(ladenheim): Figure out why this doesn't run in the background aka why
 			# it doesn't return and then spawn the task
-
 			# Response has been given, now insert bar.
 			for bar in new_bars_found:
 				logging.info('Inserting bar %s to local DB', bar.name)
 				bar_model.insert(
-						bar.name, bar.teams, bar.address, bar.city, bar.lat, 
-						bar.lon)
+						bar.name, bar.teams, bar.address, bar.city, bar.lat, bar.lon)
 			# if ll: PushLocalBars(ll)
 
 

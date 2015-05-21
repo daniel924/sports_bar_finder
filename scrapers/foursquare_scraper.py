@@ -57,20 +57,22 @@ def FindLocalBars(client, city=None, ll=None, existing_bar_map=None):
 		t.setDaemon(True)
 		t.start()
 
-# Used for validating yelp bars
 def GetTeamsForBar(client, bar_name, ll=None, city=None):
+	"""Query foursquare to verify that the bar returned from yelp is a sports bar."""
 	query_params = {
-			'query': bar_name, 'categoryId': sports_bar_cat_id, 'limit': 3}
+			'query': bar_name, 'categoryId': sports_bar_cat_id, 'limit': 1}
 	if city: query_params['near'] = city
 	if ll: query_params['ll'] = ll
 	logging.info('Querying foursquare for bar %s', bar_name)
 	bars = client.venues.search(params=query_params)
+	# We only queried for one bar that's all we should find, code is like this
+	# in case we
 	logging.info('Found bars in fsquare: %s\n', [b['name'] for b in bars['venues']])
 	for b in bars['venues']:
 		if lib.sanitize(b['name']) != bar_name: continue
 		teams = _GetTeamsForBar(b, client)
-		return teams
-	return []
+		return teams, True
+	return [], False
 
 
 # Doesn't really work.
