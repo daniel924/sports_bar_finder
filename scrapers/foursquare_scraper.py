@@ -42,11 +42,10 @@ def InsertBar(b, existing_bar_map, client):
 	with LOCK:		
 		bar_model.insert(name, teams, address, city)
 
+# used for sourcing surrounding bars
 # @lib.memoized
-def FindLocalBars(city=None, ll=None, existing_bar_map=None, client=None):
+def FindLocalBars(client, city=None, ll=None, existing_bar_map=None):
 	# Get local bars from foursquare
-	client = client or foursquare.Foursquare(
-		client_id=client_id, client_secret=client_secret)
 	query_params = {'categoryId': sports_bar_cat_id, 'limit': 50}
 	if city: query_params['near'] = city
 	if ll: query_params['ll'] = ll
@@ -58,15 +57,13 @@ def FindLocalBars(city=None, ll=None, existing_bar_map=None, client=None):
 		t.setDaemon(True)
 		t.start()
 
-def GetTeamsForBar(bar_name, ll=None, city=None, existing_bar_map=None, client=None):
-	client = client or foursquare.Foursquare(
-		client_id=client_id, client_secret=client_secret)
+# Used for validating yelp bars
+def GetTeamsForBar(client, bar_name, ll=None, city=None):
 	query_params = {
 			'query': bar_name, 'categoryId': sports_bar_cat_id, 'limit': 3}
 	if city: query_params['near'] = city
 	if ll: query_params['ll'] = ll
 	logging.info('Querying foursquare for bar %s', bar_name)
-	# import pdb; pdb.set_trace()
 	bars = client.venues.search(params=query_params)
 	logging.info('Found bars in fsquare: %s\n', [b['name'] for b in bars['venues']])
 	for b in bars['venues']:

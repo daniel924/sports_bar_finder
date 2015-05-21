@@ -8,6 +8,7 @@ import webapp2
 import sys
 
 import bar_model
+import foursquare
 import foursquare_scraper
 import yelp_scraper
 import lib
@@ -24,19 +25,13 @@ from google.appengine.ext import ndb
 # 6. Load data in background
 # 	a. maybe on app startuo load nearby bars
 # 7. Maybe do a sweet loading bar
-# 8. Investigate tips for foursquare or other API
 # 9. Figure out best way to structure files
 # 10. Think about bars with different addresses, etc.
 # 11. migrate to simplejson
-# 12. memoize calls to fourssquare or in general dont do duplicate work
 # 14. use longitude / latitude to query nearby
 #			a. convert this to city?
 #			b. can android send city data?
 #			c. pick basic radius and search ll
-# 15. first search for bar in local DB. if it's not there, search 
-#     yelp for the bar, then query for it in foursquare to validate
-#     that the team is indeed in the tags. maybe even do this in a batch
-#     batch query using your list of sports teams..
 # 16. bars with apostrophy s are tricky, possibly check for them
 # 17. in app, lat + lon is ignored at -1, -1
 # 18. fix capitalization issues after ' and numbers
@@ -45,7 +40,16 @@ from google.appengine.ext import ndb
 # 19. be careful with & vs ampersand
 # 20. bars don't always have same name e.g. stone creek vs. stone creek bar and lounge
 # 21. sometimes queries from yelp return multiple bars
-# 22. lookup bar name with just team name
+# 22. lookup bar name with just city? 
+# 23. do a one off batch query with all teams in teams list to prepopulate apps
+# 24. have insert but do validation on it
+# 25. listview map button moves off screen when bar name is long
+# 26. listview just looks shitty in general
+# 27. refactor foursquare scraper to be an object, and main will not create a 
+#     new foursquare scraper every time. same for yelp.
+# 28. Move scraper credentials to config
+
+FOURSQUARE_CLIENT = None
 
 class Address(ndb.Model):
 	address = ndb.StringProperty()
@@ -62,7 +66,8 @@ def PushLocalBars(ll):
 	bars = bar_model.searchByLocation('new york')
 	existing_bar_map = {bar.name: bar for bar in bars}
 	t = threading.Thread(
-			target=foursquare_scraper.FindLocalBars, 
+			target=foursquare_scraper.FindLocalBars,
+			args=[FOURSQUARE_CLIENT], 
 			kwargs={"ll": ll, "existing_bar_map": existing_bar_map})
 	t.setDaemon(True)
 	t.start()
@@ -99,13 +104,12 @@ class SearchHandler(webapp2.RequestHandler):
 				return
 			# TODO(ladenheim): write this bar out first and continue on
 			# with DB operations? just list te seearch val as team?
-			# TODO(ladenheim): Kick off this in the background.
-			# if ll: PushLocalBars(ll)
+		
 			new_bars_found = []
 			for bar in bars:
 				# Next, validate these are bars and populate teams by 
 				# getting the tags from foursquare.
-				teams = foursquare_scraper.GetTeamsForBar(bar.name, ll=ll)
+				teams = foursquare_scraper.GetTeamsForBar(FOURSQUARE_CLIENT, bar.name, ll=ll)
 				if not teams:
 					logging.info('Bar %s found but had no teams', bar.name)
 					continue
@@ -114,12 +118,16 @@ class SearchHandler(webapp2.RequestHandler):
 				new_bars_found.append(bar)
 				bars_json['bars'].append(lib.BarToJson(bar))
 			self.response.out.write(json.dumps(bars_json))
+			# TODO(ladenheim): Figure out why this doesn't run in the background aka why
+			# it doesn't return and then spawn the task
+
 			# Response has been given, now insert bar.
 			for bar in new_bars_found:
 				logging.info('Inserting bar %s to local DB', bar.name)
 				bar_model.insert(
 						bar.name, bar.teams, bar.address, bar.city, bar.lat, 
 						bar.lon)
+			# if ll: PushLocalBars(ll)
 
 
 class Insert(webapp2.RequestHandler):
@@ -137,7 +145,6 @@ class Reset(webapp2.RequestHandler):
 		bars = bar_model.Bar.query().fetch()
 		ndb.delete_multi([bar.key for bar in bars])
 		self.response.out.write('Database reset')
-
 
 
 class Pow(webapp2.RequestHandler):
@@ -160,6 +167,9 @@ def fix_path():
 	sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 	sys.path.append(os.path.join(os.path.dirname(__file__), 'scrapers'))
 
+FOURSQUARE_CLIENT = foursquare.Foursquare(
+		client_id=foursquare_scraper.client_id, 
+		client_secret=foursquare_scraper.client_secret)
 fix_path()
 application = webapp2.WSGIApplication([
 		('/', MainPage),
