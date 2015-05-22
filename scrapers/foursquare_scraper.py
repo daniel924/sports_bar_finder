@@ -5,16 +5,14 @@ import logging
 
 import bar_model
 import lib
+import settings
 
+SPORTS_BAR_CAT_ID = "4bf58dd8d48988d11d941735"
 
 Bar = collections.namedtuple('Bar', 'id name address city')
 
-client_id = "2OMJJJOIFVW3HOEKXZIQE3KKG0YUB3WRLIJ5JWUL2ARUIVPM"
-client_secret = "UYYGDFZQCRCELF1WCCQ5AHZZ4VBYOIXY3LJGL0T3ZHJXH5B3"
-sports_bar_cat_id = "4bf58dd8d48988d11d941735"
-
 LOCK = threading.Lock()
-TEAMS_MAP = lib.BuildTeamsList(lib.TEAMS_FILE)
+TEAMS_MAP = lib.BuildTeamsList(settings.TEAMS_FILE)
 
 def _GetTeamsForBar(bar, client):
 	teams = set()
@@ -46,7 +44,7 @@ def InsertBar(b, existing_bar_map, client):
 # @lib.memoized
 def FindLocalBars(client, city=None, ll=None, existing_bar_map=None):
 	# Get local bars from foursquare
-	query_params = {'categoryId': sports_bar_cat_id, 'limit': 50}
+	query_params = {'categoryId': SPORTS_BAR_CAT_ID, 'limit': 50}
 	if city: query_params['near'] = city
 	if ll: query_params['ll'] = ll
 	bars = client.venues.search(params=query_params)
@@ -60,7 +58,7 @@ def FindLocalBars(client, city=None, ll=None, existing_bar_map=None):
 def GetTeamsForBar(client, bar_name, ll=None, city=None):
 	"""Query foursquare to verify that the bar returned from yelp is a sports bar."""
 	query_params = {
-			'query': bar_name, 'categoryId': sports_bar_cat_id, 'limit': 1}
+			'query': bar_name, 'categoryId': SPORTS_BAR_CAT_ID, 'limit': 1}
 	if city: query_params['near'] = city
 	if ll: query_params['ll'] = ll
 	logging.info('Querying foursquare for bar %s', bar_name)
@@ -79,7 +77,7 @@ def GetTeamsForBar(client, bar_name, ll=None, city=None):
 def FindLocalBarsWithTips(val, city=None, ll=None, existing_bar_map=None):
 	client = foursquare.Foursquare(
 			client_id=client_id, client_secret=client_secret)
-	query_params = {'categoryId': sports_bar_cat_id, 'limit': 500, 'radius': 1000}
+	query_params = {'categoryId': SPORTS_BAR_CAT_ID, 'limit': 500, 'radius': 1000}
 	if city: query_params['near'] = city
 	if ll: query_params['ll'] = ll
 	query_params['query'] = val

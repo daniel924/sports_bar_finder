@@ -5,6 +5,7 @@ from google.appengine.ext import testbed
 
 import bar_model
 import lib
+import settings
 
 class LibTests(unittest.TestCase):
 
@@ -18,7 +19,7 @@ class LibTests(unittest.TestCase):
     self.testbed.init_memcache_stub()
 
   def testBuildTeamsList(self):
-    tmap = lib.BuildTeamsList(lib.TEAMS_FILE)
+    tmap = lib.BuildTeamsList(settings.TEAMS_FILE)
     self.assertEqual('new york yankees', tmap['new york yankees'])
     self.assertEqual('new york yankees', tmap['yankees'])
     self.assertEqual('boston red sox', tmap['red sox'])
@@ -26,7 +27,7 @@ class LibTests(unittest.TestCase):
     self.assertIsNone(tmap.get('boston'))
 
   def testBuildBackwardsTeamsList(self):
-    tmap = lib.BuildBackwardsTeamsList(lib.TEAMS_FILE)
+    tmap = lib.BuildBackwardsTeamsList(settings.TEAMS_FILE)
     self.assertEqual('yankees', tmap['new york yankees'])
     self.assertEqual('red sox', tmap['boston red sox'])
     self.assertEqual('coyotes', tmap['arizona coyotes'])

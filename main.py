@@ -12,6 +12,7 @@ import foursquare
 import foursquare_scraper
 import yelp_scraper
 import lib
+import settings
 
 from google.appengine.ext import ndb
 
@@ -24,8 +25,8 @@ from google.appengine.ext import ndb
 # 5. Stop app from crashing on load
 # 6. Load data in background
 # 	a. maybe on app startuo load nearby bars
-# 7. Maybe do a sweet loading bar
-# 9. Figure out best way to structure files
+# 7. Maybe do a sweet loading bar - DONE
+# 9. Figure out best way to structure files - DONE
 # 10. Think about bars with different addresses, etc.
 # 11. migrate to simplejson
 # 14. use longitude / latitude to query nearby
@@ -34,10 +35,9 @@ from google.appengine.ext import ndb
 #			c. pick basic radius and search ll
 # 16. bars with apostrophy s are tricky, possibly check for them
 # 17. in app, lat + lon is ignored at -1, -1
-# 18. fix capitalization issues after ' and numbers
-#  		a. have search name and display name separate - better
-# 		b. store two copies - easier
-# 19. be careful with & vs ampersand
+# 18. fix capitalization issues after ' and numbers 
+#			a. just insert display name as whatever yelp said and don't capitilize
+# 19. be careful with & vs ampersand - DONE
 # 20. bars don't always have same name e.g. stone creek vs. stone creek bar and lounge
 # 21. sometimes queries from yelp return multiple bars
 # 22. lookup bar name with just city? 
@@ -48,6 +48,8 @@ from google.appengine.ext import ndb
 # 27. refactor foursquare scraper to be an object, and main will not create a 
 #     new foursquare scraper every time. same for yelp.
 # 28. Move scraper credentials to config
+# 29. android - if there is already a bar showing, a new search doesn't clear it
+
 
 FOURSQUARE_CLIENT = None
 
@@ -97,9 +99,6 @@ class SearchHandler(webapp2.RequestHandler):
 				logging.info('No location given; terminating')
 				self.response.out.write('')
 				return
-			
-			import pdb; pdb.set_trace()
-
 
 			# First, get bars from yelp. These don't have teams.
 			bars = yelp_scraper.FindBarByLocation(search_val, ll)
@@ -120,7 +119,7 @@ class SearchHandler(webapp2.RequestHandler):
 					logging.info('Bar %s found but had no teams from foursquare', bar.name)
 					# Foursquare often does not have tag data, so if the value submitted was
 					# a team, then just return the yelp bar anyway.
-					teams_map = lib.BuildTeamsList(lib.TEAMS_FILE)
+					teams_map = lib.BuildTeamsList(settings.TEAMS_FILE)
 					if search_val in teams_map: teams = [teams_map[search_val]]
 				logging.info('Teams found for bar %s', bar.name)
 				bar.teams = teams
@@ -176,8 +175,8 @@ def fix_path():
 	sys.path.append(os.path.join(os.path.dirname(__file__), 'scrapers'))
 
 FOURSQUARE_CLIENT = foursquare.Foursquare(
-		client_id=foursquare_scraper.client_id, 
-		client_secret=foursquare_scraper.client_secret)
+		client_id=settings.FOURSQUARE_CLIENT_ID, 
+		client_secret=settings.FOURSQUARE_CLIENT_SECRET)
 fix_path()
 application = webapp2.WSGIApplication([
 		('/', MainPage),
