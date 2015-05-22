@@ -8,6 +8,7 @@ import lib
 import settings
 
 SPORTS_BAR_CAT_ID = "4bf58dd8d48988d11d941735"
+NIGHTLIFE_SPOT_CAT = "4d4b7105d754a06376d81259"
 
 Bar = collections.namedtuple('Bar', 'id name address city')
 
@@ -57,8 +58,10 @@ def FindLocalBars(client, city=None, ll=None, existing_bar_map=None):
 
 def GetTeamsForBar(client, bar_name, ll=None, city=None):
 	"""Query foursquare to verify that the bar returned from yelp is a sports bar."""
+	# We just use nightlife spot here as foursquare bar categorizations are not
+	# always that accurate and we are just verifying this is a bar anyway.
 	query_params = {
-			'query': bar_name, 'categoryId': SPORTS_BAR_CAT_ID, 'limit': 1}
+			'query': bar_name, 'categoryId': NIGHTLIFE_SPOT_CAT, 'limit': 5}
 	if city: query_params['near'] = city
 	if ll: query_params['ll'] = ll
 	logging.info('Querying foursquare for bar %s', bar_name)

@@ -67,12 +67,13 @@ def search(term, ll):
     Returns:
         dict: The JSON response from the request.
     """
-    
+    # divebars,irish_pubs,hotel_bar,beerbar,
+    term += ' bar'
     url_params = {
         'term': term.replace(' ', '+'),
         'll': ll.replace(' ', '+'),
         'limit': SEARCH_LIMIT,
-        'category_filer': 'sportsbar'
+        'category_filer': 'sportsbar,pubs,bars'
     }
     return request(API_HOST, SEARCH_PATH, url_params=url_params)
 

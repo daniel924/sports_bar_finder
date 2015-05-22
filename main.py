@@ -46,8 +46,8 @@ from google.appengine.ext import ndb
 # 25. listview map button moves off screen when bar name is long
 # 26. listview just looks shitty in general
 # 27. refactor foursquare scraper to be an object, and main will not create a 
-#     new foursquare scraper every time. same for yelp.
-# 28. Move scraper credentials to config
+#     new foursquare scraper every time. same for yelp. - DONE
+# 28. Move scraper credentials to config - DONE
 # 29. android - if there is already a bar showing, a new search doesn't clear it
 
 
