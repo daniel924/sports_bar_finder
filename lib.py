@@ -1,5 +1,6 @@
 import collections
 import functools
+import string
 
 class memoized(object):
    '''Decorator. Caches a function's return value each time it is called.
@@ -63,7 +64,7 @@ def BarToJson(bar):
   """Takes in a bar_model.Bar and returns json."""
   name = bar.display_name if bar.display_name else bar.name
   return {
-      'name': name.title(),
-      'teams': [t.title() for t in bar.teams],
-      'city': bar.city.title(),
-      'address': bar.address.title()}
+      'name': string.capwords(name),
+      'teams': [string.capwords(t) for t in bar.teams],
+      'city': string.capwords(bar.city),
+      'address': string.capwords(bar.address)}

@@ -33,7 +33,7 @@ from google.appengine.ext import ndb
 #			a. convert this to city?
 #			b. can android send city data?
 #			c. pick basic radius and search ll
-# 16. bars with apostrophy s are tricky, possibly check for them
+# 16. bars with apostrophy s are tricky, possibly check for them - DONE
 # 17. in app, lat + lon is ignored at -1, -1
 # 18. fix capitalization issues after ' and numbers 
 #			a. just insert display name as whatever yelp said and don't capitilize
@@ -48,7 +48,7 @@ from google.appengine.ext import ndb
 # 27. refactor foursquare scraper to be an object, and main will not create a 
 #     new foursquare scraper every time. same for yelp. - DONE
 # 28. Move scraper credentials to config - DONE
-# 29. android - if there is already a bar showing, a new search doesn't clear it
+# 29. android - if there is already a bar showing, a new search doesn't clear it - DONE
 
 
 FOURSQUARE_CLIENT = None
@@ -122,6 +122,9 @@ class SearchHandler(webapp2.RequestHandler):
 					teams_map = lib.BuildTeamsList(settings.TEAMS_FILE)
 					if search_val in teams_map: teams = [teams_map[search_val]]
 				logging.info('Teams found for bar %s', bar.name)
+				if not teams:
+					self.response.out.write('')
+					continue
 				bar.teams = teams
 				new_bars_found.append(bar)
 				bars_json['bars'].append(lib.BarToJson(bar))
@@ -143,8 +146,10 @@ class Insert(webapp2.RequestHandler):
 		team_list = self.request.get("teams").split(',')
 		address = self.request.get("address")
 		city = self.request.get("city")
+		lat = self.request.get("lat")
+		lon = self.request.get("lon")
 
-		bar_model.insert(name, team_list, address, city)
+		bar_model.insert(name, team_list, address, city, lat, lon)
 
 
 class Reset(webapp2.RequestHandler):
