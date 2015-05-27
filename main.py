@@ -20,24 +20,15 @@ from google.appengine.ext import ndb
 # Things to do.
 # 1. Tests
 # 3. Authorization
-# 4. Add pow to app
-# 		b. restrict user insertion?
 # 5. Stop app from crashing on load
 # 6. Load data in background
 # 	a. maybe on app startuo load nearby bars
-# 7. Maybe do a sweet loading bar - DONE
-# 9. Figure out best way to structure files - DONE
 # 10. Think about bars with different addresses, etc.
 # 11. migrate to simplejson
 # 14. use longitude / latitude to query nearby
 #			a. convert this to city?
 #			b. can android send city data?
 #			c. pick basic radius and search ll
-# 16. bars with apostrophy s are tricky, possibly check for them - DONE
-# 17. in app, lat + lon is ignored at -1, -1
-# 18. fix capitalization issues after ' and numbers 
-#			a. just insert display name as whatever yelp said and don't capitilize
-# 19. be careful with & vs ampersand - DONE
 # 20. bars don't always have same name e.g. stone creek vs. stone creek bar and lounge
 # 21. sometimes queries from yelp return multiple bars
 # 22. lookup bar name with just city? 
@@ -45,10 +36,19 @@ from google.appengine.ext import ndb
 # 24. have insert but do validation on it
 # 25. listview map button moves off screen when bar name is long
 # 26. listview just looks shitty in general
+# 30. show city option for insert when ll is not available? show all the time?
+
+# 16. bars with apostrophy s are tricky, possibly check for them - DONE
+# 17. in app, lat + lon is ignored at -1, -1
+# 18. fix capitalization issues after ' and numbers - DONE
+# 19. be careful with & vs ampersand - DONE
 # 27. refactor foursquare scraper to be an object, and main will not create a 
 #     new foursquare scraper every time. same for yelp. - DONE
 # 28. Move scraper credentials to config - DONE
 # 29. android - if there is already a bar showing, a new search doesn't clear it - DONE
+# 7. Maybe do a sweet loading bar - DONE
+# 9. Figure out best way to structure files - DONE
+
 
 
 FOURSQUARE_CLIENT = None
@@ -144,12 +144,28 @@ class Insert(webapp2.RequestHandler):
 	def get(self):
 		name = self.request.get("bar")
 		team_list = self.request.get("teams").split(',')
-		address = self.request.get("address")
 		city = self.request.get("city")
 		lat = self.request.get("lat")
 		lon = self.request.get("lon")
 
-		bar_model.insert(name, team_list, address, city, lat, lon)
+		# Validate and get more bar info from foursquare.
+		logging.info(
+			'Attempting to insert bar %s with teams %s at %s %s %s', name, team_list, city, lat, lon)
+		if city:
+			bar, is_bar = foursquare_scraper.GetBar(FOURSQUARE_CLIENT, name, city=city)
+		else:
+			ll = lat + ',' + lon
+			import pdb; pdb.set_trace()
+			bar, is_bar = foursquare_scraper.GetBar(FOURSQUARE_CLIENT, name, ll=ll)
+
+		if not bar:
+			logging.info('Could not validate bar.')
+			self.response.out('')
+			return
+		team_list.extend(bar.teams)
+		logging.info(
+			'Instering bar %s with teams %s at %s %s %s', name, team_list, city, lat, lon)
+		bar_model.insert(bar.name, team_list, bar.address, bar.city, bar.lat, bar.lon)
 
 
 class Reset(webapp2.RequestHandler):

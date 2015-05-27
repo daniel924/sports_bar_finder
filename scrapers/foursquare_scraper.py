@@ -15,12 +15,27 @@ Bar = collections.namedtuple('Bar', 'id name address city')
 LOCK = threading.Lock()
 TEAMS_MAP = lib.BuildTeamsList(settings.TEAMS_FILE)
 
+
+def GetAddress(venue):
+	return lib.sanitize(venue['location'].get('address'))
+
+def GetCity(venue):
+	return lib.sanitize(venue['location'].get('city'))	
+
+def GetLat(venue):
+	return venue['location'].get('lat')
+
+def GetLon(venue):
+	return venue['location'].get('lng')
+
+
 def _GetTeamsForBar(bar, client):
 	teams = set()
 	for tag in client.venues(bar['id'])['venue']['tags']:
 		if tag in TEAMS_MAP: 
 			teams.add(TEAMS_MAP[tag])
 	return teams
+
 
 def InsertBar(b, existing_bar_map, client):
 	try:
@@ -56,12 +71,12 @@ def FindLocalBars(client, city=None, ll=None, existing_bar_map=None):
 		t.setDaemon(True)
 		t.start()
 
-def GetTeamsForBar(client, bar_name, ll=None, city=None):
-	"""Query foursquare to verify that the bar returned from yelp is a sports bar."""
+
+def GetBar(client, bar_name, ll=None, city=None):
 	# We just use nightlife spot here as foursquare bar categorizations are not
 	# always that accurate and we are just verifying this is a bar anyway.
 	query_params = {
-			'query': bar_name, 'categoryId': NIGHTLIFE_SPOT_CAT, 'limit': 5}
+			'query': bar_name, 'categoryId': NIGHTLIFE_SPOT_CAT, 'limit': 3}
 	if city: query_params['near'] = city
 	if ll: query_params['ll'] = ll
 	logging.info('Querying foursquare for bar %s', bar_name)
@@ -70,10 +85,22 @@ def GetTeamsForBar(client, bar_name, ll=None, city=None):
 	# in case we
 	logging.info('Found bars in fsquare: %s\n', [b['name'] for b in bars['venues']])
 	for b in bars['venues']:
-		if lib.sanitize(b['name']) != bar_name: continue
+		if lib.normalize(b['name']) != lib.normalize(bar_name): continue
 		teams = _GetTeamsForBar(b, client)
-		return teams, True
-	return [], False
+		bar = bar_model.Bar(
+			name=b['name'], teams=teams, address=GetAddress(b), city=GetCity(b), 
+			lat=GetLat(b), lon=GetLon(b))
+		return bar, True
+	return None, False
+
+
+def GetTeamsForBar(client, bar_name, ll=None, city=None):
+	"""Query foursquare to verify that the bar returned from yelp is a sports bar."""
+	bar, is_bar = GetBar(client, bar_name, ll, city)
+	if bar:
+		return bar.teams, is_bar
+	else:
+		return [], is_bar
 
 
 # Doesn't really work.

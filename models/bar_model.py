@@ -28,7 +28,7 @@ def insert(name, team_list, address, city, lat, lon):
 	# Note that apostrophes are stripped for searching
 	bar = search(name, city=city)
 	if not bar:
-		bar = Bar(name=name.replace('\'', ''), teams=teams, 
+		bar = Bar(name=lib.normalize(name), teams=teams, 
 							address=address, city=city, lat=lat, lon=lon, 
 							display_name=name, team_names=team_names)
 	else:

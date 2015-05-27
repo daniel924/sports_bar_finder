@@ -35,6 +35,12 @@ def sanitize(s):
     s = s.replace('&', 'and')
     return s.lower().lstrip().rstrip()
 
+def normalize(s):
+  s = sanitize(s)
+  s = s.replace('\'', '')
+  s = s.replace('and', '&')
+  return s
+
 @memoized
 def BuildTeamsList(teams_file):
   teams = {}
