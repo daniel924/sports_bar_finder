@@ -38,8 +38,16 @@ def sanitize(s):
 def normalize(s):
   s = sanitize(s)
   s = s.replace('\'', '')
+  s = s.replace('.', '')
   s = s.replace('and', '&')
   return s
+
+def IsSameBar(s1, s2):
+  s1 = normalize(s1)
+  s2 = normalize(s2)
+  if s1 == s2 or s1 in s2 or s2 in s1:
+    return True
+  return False
 
 @memoized
 def BuildTeamsList(teams_file):
@@ -51,7 +59,8 @@ def BuildTeamsList(teams_file):
     team = split[1].lstrip().rstrip().lower()
     full_team_name = city + ' ' + team
     teams[full_team_name] = full_team_name
-    teams[team] = full_team_name
+    teams[normalize(full_team_name)] = full_team_name
+    teams[normalize(team)] = full_team_name
   return teams
 
 @memoized
@@ -64,6 +73,7 @@ def BuildBackwardsTeamsList(teams_file):
     team = sanitize(split[1])
     full_team_name = city + ' ' + team
     teams[full_team_name] = team
+    teams[normalize(full_team_name)] = team
   return teams
 
 def BarToJson(bar):

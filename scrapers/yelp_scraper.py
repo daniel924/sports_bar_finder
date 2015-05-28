@@ -13,9 +13,10 @@ import settings
 API_HOST = 'api.yelp.com'
 DEFAULT_TERM = 'dinner'
 DEFAULT_LOCATION = 'San Francisco, CA'
-SEARCH_LIMIT = 3
+SEARCH_LIMIT = 5
 SEARCH_PATH = '/v2/search/'
 BUSINESS_PATH = '/v2/business/'
+CATEGORIES = ['sportsbars', 'pubs', 'bars']
 
 
 TEAMS_MAP = lib.BuildTeamsList(settings.TEAMS_FILE)
@@ -68,12 +69,13 @@ def search(term, ll):
         dict: The JSON response from the request.
     """
     # divebars,irish_pubs,hotel_bar,beerbar,
+    categories = ['sportsbar', 'pubs', 'bars']
     term += ' bar'
     url_params = {
         'term': term.replace(' ', '+'),
         'll': ll.replace(' ', '+'),
         'limit': SEARCH_LIMIT,
-        'category_filer': 'sportsbar,pubs,bars'
+        'category_filer': ','.join(CATEGORIES)
     }
     return request(API_HOST, SEARCH_PATH, url_params=url_params)
 
@@ -82,6 +84,9 @@ def FindBarByLocation(val, ll=None, city=None):
   bizes = search(val, ll)['businesses']
   bars = []
   for b in bizes:
+    # Sometimes yelp returns non-bars even though we look for them.
+    if not set([c[1] for c in b['categories']]) & set(CATEGORIES): 
+        continue
     address = b['location']['address'][0]
     city = b['location']['city']
     bars.append(bar_model.Bar(

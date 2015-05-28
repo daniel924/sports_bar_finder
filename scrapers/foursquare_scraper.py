@@ -85,7 +85,7 @@ def GetBar(client, bar_name, ll=None, city=None):
 	# in case we
 	logging.info('Found bars in fsquare: %s\n', [b['name'] for b in bars['venues']])
 	for b in bars['venues']:
-		if lib.normalize(b['name']) != lib.normalize(bar_name): continue
+		if lib.IsSameBar(b['name'], bar_name): continue
 		teams = _GetTeamsForBar(b, client)
 		bar = bar_model.Bar(
 			name=b['name'], teams=teams, address=GetAddress(b), city=GetCity(b), 

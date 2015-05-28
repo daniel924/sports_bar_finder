@@ -36,7 +36,9 @@ from google.appengine.ext import ndb
 # 24. have insert but do validation on it
 # 25. listview map button moves off screen when bar name is long
 # 26. listview just looks shitty in general
-# 30. show city option for insert when ll is not available? show all the time?
+# 30. show city option for insert when ll is not available? show all the time
+# 31. teams from manually inserted bars are not fixed to correct names and are not validated!!!!
+# 32. if a team is in the local db, we will return that bar without looking for more bars
 
 # 16. bars with apostrophy s are tricky, possibly check for them - DONE
 # 17. in app, lat + lon is ignored at -1, -1
@@ -106,7 +108,6 @@ class SearchHandler(webapp2.RequestHandler):
 				logging.info('No bars found in yelp; terminating')
 				self.response.out.write('')
 				return
-	
 			new_bars_found = []
 			for bar in bars:
 				# Next, validate these are bars and populate teams by 
@@ -115,12 +116,12 @@ class SearchHandler(webapp2.RequestHandler):
 				if not is_bar: 
 					logging.info('Bar %s not found in foursquare.', bar.name)
 					continue
-				if not teams:
-					logging.info('Bar %s found but had no teams from foursquare', bar.name)
-					# Foursquare often does not have tag data, so if the value submitted was
-					# a team, then just return the yelp bar anyway.
-					teams_map = lib.BuildTeamsList(settings.TEAMS_FILE)
-					if search_val in teams_map: teams = [teams_map[search_val]]
+				logging.info('Bar %s found in foursquare', bar.name)
+
+				# Foursquare often does not have tag data, so if the value submitted was
+				# a team, then just return the yelp bar anyway.
+				teams_map = lib.BuildTeamsList(settings.TEAMS_FILE)			
+				if search_val in teams_map: teams.append(teams_map[search_val])
 				logging.info('Teams found for bar %s', bar.name)
 				if not teams:
 					self.response.out.write('')
@@ -155,12 +156,11 @@ class Insert(webapp2.RequestHandler):
 			bar, is_bar = foursquare_scraper.GetBar(FOURSQUARE_CLIENT, name, city=city)
 		else:
 			ll = lat + ',' + lon
-			import pdb; pdb.set_trace()
 			bar, is_bar = foursquare_scraper.GetBar(FOURSQUARE_CLIENT, name, ll=ll)
 
 		if not bar:
 			logging.info('Could not validate bar.')
-			self.response.out('')
+			self.response.out.write('')
 			return
 		team_list.extend(bar.teams)
 		logging.info(
