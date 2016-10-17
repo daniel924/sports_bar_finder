@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BeerRatings</string>
+    <string name="search">Search for places...</string>
+    <string name="beer">Beer</string>
+    <string name="beer_advocate_rating">Beer Adv.</string>
+    <string name="untappd_rating">Untpd</string>
+</resources>

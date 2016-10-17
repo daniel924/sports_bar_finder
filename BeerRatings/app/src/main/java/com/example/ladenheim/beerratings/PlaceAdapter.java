@@ -52,11 +52,23 @@ public class PlaceAdapter extends ArrayAdapter<Beer> {
         beerName.setText(beer.name);
         TextView ratingBeerAdvocate = (TextView) convertView.findViewById(R.id.rating_ba);
         ratingBeerAdvocate.setText(Double.toString(beer.ratingBeerAdvocate));
-        TextView ratingUntappd = (TextView) convertView.findViewById(R.id.rating_untappd);
-        ratingUntappd.setText(Double.toString(beer.ratingUntappd));
+        //TextView ratingUntappd = (TextView) convertView.findViewById(R.id.rating_untappd);
+        //ratingUntappd.setText(Double.toString(beer.ratingUntappd));
         return convertView;
     }
 
+    @Override
+    public int getCount() {
+        return beers.size();
+    }
 
+    @Override
+    public Beer getItem(int position) {
+        return beers.get(position);
+    }
 
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
 }
