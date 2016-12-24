@@ -37,10 +37,11 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/name_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="10dip"
-            android:paddingRight="130dip"
+            android:width="190dip"
             android:textSize="18dip"
             android:textStyle="bold"
             android:text="@string/beer"
@@ -48,10 +49,12 @@
             android:layout_row="0"/>
 
         <TextView
+            android:id="@+id/ba_rating_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dip"
-            android:width="115dip"
+            android:paddingRight="50dip"
+            android:width="100dip"
             android:textSize="18dip"
             android:textStyle="bold"
             android:text="@string/beer_advocate_rating"

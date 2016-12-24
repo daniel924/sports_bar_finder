@@ -11,6 +11,9 @@ import android.widget.TextView;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -37,9 +40,45 @@ public class PlaceAdapter extends ArrayAdapter<Beer> {
 
     public void setList(List<Beer> beers) {
         this.beers = beers;
+        this.notifyDataSetChanged();
+    }
+
+    public void sortByRating() {
+        Collections.sort(this.beers, new Comparator<Beer>() {
+            @Override
+            public int compare(Beer b1, Beer b2) {
+                // There are three decimal places in rating.
+                return (int)(b2.ratingBeerAdvocate*100 - b1.ratingBeerAdvocate*100);
+            }
+        });
         notifyDataSetChanged();
     }
 
+    public void sortByName() {
+        Collections.sort(this.beers, new Comparator<Beer>() {
+            @Override
+            public int compare(Beer b1, Beer b2) {
+                // There are three decimal places in rating.
+                return b1.name.compareTo(b2.name);
+            }
+        });
+        notifyDataSetChanged();
+    }
+
+
+    @Override
+    public void notifyDataSetChanged() {
+//        this.setNotifyOnChange(false);
+//        this.sort(new Comparator<Beer>() {
+//            @Override
+//            public int compare(Beer b1, Beer b2) {
+//                // There are three decimal places in rating.
+//                return (int)(b2.ratingBeerAdvocate*100 - b1.ratingBeerAdvocate*100);
+//            }
+//        });
+//        this.setNotifyOnChange(true);
+        super.notifyDataSetChanged();
+    }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {

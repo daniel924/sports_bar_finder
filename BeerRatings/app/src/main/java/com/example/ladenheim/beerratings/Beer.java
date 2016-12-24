@@ -13,7 +13,14 @@ public class Beer {
         this.ratingBeerAdvocate = ratingBeerAdvocate;
         this.ratingUntappd = ratingUntappd;
     }
-    public Beer() {}
+    public Beer() {
+        this.name = "";
+        this.ratingBeerAdvocate = 0.0;
+    }
+    public Beer(String name) {
+        this.name = name;
+        this.ratingBeerAdvocate = 0.0;
+    }
 
 
 }
